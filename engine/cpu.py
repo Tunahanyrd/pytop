@@ -8,17 +8,17 @@ class CPU:
         psutil.cpu_percent()
         psutil.cpu_percent(percpu=True)
 
-    def get_times(self, percpu: bool = False) -> Union[psutil._common.scputimes, List[psutil._common.scputimes]]:
+    def get_times(self, percpu: bool = False) -> Union[psutil._pslinux.scputimes, List[psutil._pslinux.scputimes]]:
         return psutil.cpu_times(percpu=percpu)
 
-    def get_times_percent(self, percpu: bool = False, interval: Optional[float] = None) -> Union[psutil._common.scputimes, List[psutil._common.scputimes]]:
+    def get_times_percent(self, percpu: bool = False, interval: Optional[float] = None) -> Union[psutil._pslinux.scputimes, List[psutil._pslinux.scputimes]]:
         return psutil.cpu_times_percent(interval=interval, percpu=percpu)
 
     def get_percent(self, interval: Optional[float] = None, percpu: bool = False) -> Union[float, List[float]]:
-        return psutil.cpu_percent(interval=interval, percpu=percpu)
-
+        return psutil.cpu_percent(interval=interval, percpu=percpu) 
+    
     def get_count(self, logical: bool = True) -> int:
-        return psutil.cpu_count(logical=logical)
+        return f"{psutil.cpu_count(logical=logical)} CPUs"
 
     def get_stats(self) -> psutil._common.scpustats:
         return psutil.cpu_stats()
