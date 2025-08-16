@@ -10,12 +10,6 @@ class Disk:
     def get_part(self) -> List[psutil._common.sdiskpart]:
         return self._partition
     
-    def get_usage(self, path: str) -> Optional[psutil._common.sdiskusage]:
-        try:
-            return psutil.disk_usage(path)
-        except FileNotFoundError:
-            return None
-    
     def get_usage(self) -> Dict[str, psutil._common.sdiskusage]:
         usage_info = {}
         for part in self._partition:

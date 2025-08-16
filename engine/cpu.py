@@ -23,7 +23,7 @@ class CPU:
     def get_stats(self) -> psutil._common.scpustats:
         return psutil.cpu_stats()
 
-    def get_freq(self, percpu: bool = False) -> Union[psutil._common.shwtemp, List[psutil._common.scpufreq]]:
+    def get_freq(self, percpu: bool = False) -> Union[psutil._common.scpufreq, List[psutil._common.scpufreq]]:
         return psutil.cpu_freq(percpu=percpu)
 
     def get_loadavg(self) -> Optional[tuple[float, float, float]]:
