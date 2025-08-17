@@ -257,21 +257,22 @@ class SimpleParse(Parser):
                   num /= step
         return f"{num:.1f} {units[-1]}"
             
-    def format_percent(self, value: List[float], decimals: Optional[int] = None):          
+    def format_percent(self, value: List[float], 
+                       decimals: Optional[int] = None,
+                       part: str = "CPU: "):          
         if decimals == None:
             decimals = self.config.percent_decimals
-        value = list(value)
-        if len(value) == 1:
-            return f"CPU: {max(0.0, min(100.0, round(value, decimals)))}%"
-        return [f"CPU {idx}: {max(0.0, min(100.0, round(v, decimals)))}%" for idx, v in enumerate(value)]    
+        if isinstance(value, (int, float)):
+            return f"{part}{max(0.0, min(100.0, round(value, decimals)))}%"
+        return [f"{part}{idx}: {max(0.0, min(100.0, round(v, decimals)))}%" for idx, v in enumerate(value)]    
     
     def format_freq(self, mhz: Optional[float]) -> str:
         units = ["MHz", "GHz"]
         for unit in units:
-            if abs(mhz) < 10e3:
-                return f"{mhz} MHz"
+            if abs(mhz) < 1000:
+                return f"{round(mhz, 2)} MHz"
             else:
-                return f"{mhz / 1000} GHz"
+                return f"{round((mhz / 1000), 2)} GHz"
             
     def severity_from_percent(self, value: float, profile: SeverityProfile) -> SeverityLevel:
         lo, hi = profile.clamp      

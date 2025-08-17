@@ -20,5 +20,5 @@ class Disk:
         return usage_info
     
     def get_io_counters(self, perdisk: bool=False, nowrap:bool=False) -> Optional[Dict[str, psutil._common.sdiskio]]:
-        return psutil.disk_io_counters(perdisk=perdisk)
+        return psutil.disk_io_counters(perdisk=perdisk, nowrap=nowrap)
                 
