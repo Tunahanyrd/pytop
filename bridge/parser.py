@@ -5,93 +5,12 @@ from typing import TypedDict, List, Dict, Optional, Literal, Tuple
 from abc import ABC, abstractmethod
 from enum import Enum
 import datetime
-# ===== ham veri için returnler =====
-class CpuCoreFreqTD(TypedDict, total=False):
-    current: float
-    min: Optional[float]
-    max: Optional[float]
-    
-class CpuSnapshotTD(TypedDict):
-    percent_total: float
-    percent_percpu: List[float]
-    freq_percpu: List[CpuCoreFreqTD]
-
-class MemorySnapshotTD(TypedDict):
-    total: int
-    available: int
-    used: int
-    percent: float
-    swap_total: int
-    swap_used: int
-    swap_percent: float
-
-class DiskPartitionUsageTD(TypedDict):
-    mountpoint: str
-    total: int
-    used: int
-    free: int
-    percent: float
-
-class DiskIoTD(TypedDict):
-    read_count: int
-    write_count: int
-    read_bytes: int
-    write_bytes: int
-
-class DiskSnapshotTD(TypedDict):
-    usage: List[DiskPartitionUsageTD]
-    io_perdisk: Dict[str, DiskIoTD]
-
-class ProcessInfoTD(TypedDict, total=False):
-    pid: int
-    name: str
-    username: str
-    cpu_percent: float
-    memory_percent: float
-    
+  
 class SeverityLevel(str, Enum):
     OK   = "ok"
     INFO = "info"   
     WARN = "warn"
     CRIT = "crit"
-# ===== ui a gidecek normalize veri =====
-
-class CpuViewTD(TypedDict, total=False):
-    total_text: str
-    total_severity: Literal["ok", "warn", "crit"]
-    per_core_text: List[str]
-    per_core_severity: List[Literal["ok", "warn", "crit"]]
-    freq_text: List[str]
-
-class MemoryViewTD(TypedDict, total=False):
-    used_text: str
-    total_text: str
-    percent_text: str
-    percent_severity: Literal["ok", "warn", "crit"]
-    swap_used_text: str
-    swap_total_text: str
-    swap_percent_text: str
-    swap_severity: Literal["ok", "warn", "crit"]
-
-class DiskUsageRowTD(TypedDict, total=False):
-    mountpoint: str
-    used_text: str
-    total_text: str
-    percent_text: str
-    severity: Literal["ok", "warn", "crit"]
-
-class DiskIoViewTD(TypedDict, total=False):
-    # disk adı -> özet metinler / hızlar
-    per_disk: Dict[str, Dict[str, str]]
-
-class ProcessRowTD(TypedDict, total=False):
-    pid: int
-    name: str
-    user: str
-    cpu_text: str
-    mem_text: str
-    cpu_value: float
-    mem_value: float
 
 # ===== state =====
 
