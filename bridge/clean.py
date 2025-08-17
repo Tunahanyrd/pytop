@@ -245,3 +245,20 @@ def getswap():
         else:
             out[k] = parser.format_bytes(v)
     return out
+
+
+pm = ProcessManager(interval=1.0)
+pm.start()
+rows = pm(
+    sort_by="cpu_percent",
+    limit=15,
+        fields=["pid","username","cpu_percent",
+                "memory_percent","name","ppid","status",
+            "nice","num_threads","create_time",
+            "cmdline","rss","vms","read_bytes",
+            "write_bytes","cpu_user","cpu_system","exe"],
+    formatters=ProcessManager.default_formatters(parser)
+)
+for r in rows:
+    print(r)
+pm.stop()

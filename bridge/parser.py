@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import TypedDict, List, Dict, Optional, Literal, Tuple
 from abc import ABC, abstractmethod
 from enum import Enum
-
+import datetime
 # ===== ham veri için returnler =====
 class CpuCoreFreqTD(TypedDict, total=False):
     current: float
@@ -242,8 +242,18 @@ class Parser(ABC):
     def shorten_path(self, path: str, max_len: Optional[int] = None) -> str:
         """Metni (örn. mountpoint) kısalt; baş/son koru, ortadan kes."""
         pass
+    @abstractmethod
+    def format_ctime(self, epoch: float) -> str:
+        """Zaman formatlama için utils"""
+        pass
   
 class SimpleParse(Parser):
+    def format_ctime(self, epoch: float) -> str:
+        try:
+            dt = datetime.datetime.fromtimestamp(epoch)
+            return dt.strftime("%Y-%m-%d %H:%M:%S")
+        except Exception as e:
+            return "-"
        
     def format_bytes(self, value: int) -> str:
         units = ["B", "KiB", "MiB", "GiB", "TiB"] if self.config.use_binary_units else ["B", "KB", "MB", "GB", "TB"]
@@ -416,9 +426,3 @@ class SimpleParse(Parser):
             squeezed = squeezed[:max_len]
 
         return squeezed
-    
-        
-        
-        
-            
-    
