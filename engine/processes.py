@@ -72,8 +72,8 @@ class ProcessManager:
             return list(self._processes) # return its copy
     
     def sort_processes(self, 
-                       by:str="cpu_percent", 
-                       reverse:bool=True) -> List[Dict[str, Any]]:
+                        by:str="cpu_percent", 
+                        reverse:bool=True) -> List[Dict[str, Any]]:
         procs = self.get_processes()
         return sorted(procs, key=lambda p: (p.get(by, 0) is None, p.get(by, 0), p.get("pid", 0)), reverse=reverse)
     
@@ -81,13 +81,13 @@ class ProcessManager:
         return [p for p in self.get_processes() if p.get("username") == uname]
     
     def __call__(self,
-                 *,
-                 sort_by: str = "cpu_percent",
-                 reverse: bool = True,
-                 limit: int | None = None,
-                 fields: list[str] | None = None,
-                 user: str | None = None,
-                 formatters: dict[str, callable] | None = None) -> list[dict]:
+                *,
+                sort_by: str = "cpu_percent",
+                reverse: bool = True,
+                limit: int | None = None,
+                fields: list[str] | None = None,
+                user: str | None = None,
+                formatters: dict[str, callable] | None = None) -> list[dict]:
         """
         Kullanım: pm(sort_by="cpu_percent", limit=20, fields=[...], formatters={...})
         - sort_by/reverse: sıralama
@@ -134,3 +134,28 @@ class ProcessManager:
             "write_bytes": lambda b: parser.format_bytes(b or 0),
             "create_time": lambda t: parser.format_ctime(t),
         }
+
+class ProcessDetail:
+    def __init__(self, pid: int):
+        self.proc = psutil.Process(pid)
+
+    def memory_full_info(self):
+        return self.proc.memory_full_info()
+
+    def io_counters(self):
+        return self.proc.io_counters()
+
+    def open_files(self):
+        return self.proc.open_files()
+
+    def connections(self):
+        return self.proc.net_connections()
+
+    def num_fds(self):  # Unix only
+        try:
+            return self.proc.num_fds()
+        except AttributeError:
+            return None
+
+    def threads(self):
+        return self.proc.threads()

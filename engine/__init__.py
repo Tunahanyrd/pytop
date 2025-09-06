@@ -16,11 +16,15 @@ __version__ = "0.1.0"
 from .cpu import CPU
 from .memory import Memory
 from .disk import Disk
-from .processes import ProcessManager
+from .processes import ProcessManager, ProcessDetail
+from .network import Network
+from .sensors import Sensors
+from .system import System
+from .winservices import WinServices
 
 __all__ = [
-    "CPU",
-    "Memory",
-    "Disk",
-    "ProcessManager",
+    "CPU", "Memory", "Disk",
+    "ProcessManager", "ProcessDetail",
+    "Network", "Sensors", "System",
+    "WinServices",
 ]

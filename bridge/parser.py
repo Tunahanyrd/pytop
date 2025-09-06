@@ -5,7 +5,7 @@ from typing import TypedDict, List, Dict, Optional, Literal, Tuple
 from abc import ABC, abstractmethod
 from enum import Enum
 import datetime
-  
+
 class SeverityLevel(str, Enum):
     OK   = "ok"
     INFO = "info"   
@@ -165,7 +165,7 @@ class Parser(ABC):
     def format_ctime(self, epoch: float) -> str:
         """Zaman formatlama için utils"""
         pass
-  
+
 class SimpleParse(Parser):
     def format_ctime(self, epoch: float) -> str:
         try:
@@ -173,22 +173,22 @@ class SimpleParse(Parser):
             return dt.strftime("%Y-%m-%d %H:%M:%S")
         except Exception as e:
             return "-"
-       
+
     def format_bytes(self, value: int) -> str:
         units = ["B", "KiB", "MiB", "GiB", "TiB"] if self.config.use_binary_units else ["B", "KB", "MB", "GB", "TB"]
         step = 1024 if self.config.use_binary_units else 1000
-          
+        
         num = float(value) 
         for unit in units:
-              if abs(num) < step:
-                  return f"{num:.1f} {unit}"
-              else:
-                  num /= step
+            if abs(num) < step:
+                return f"{num:.1f} {unit}"
+            else:
+                num /= step
         return f"{num:.1f} {units[-1]}"
             
     def format_percent(self, value: List[float], 
-                       decimals: Optional[int] = None,
-                       part: str = "CPU: "):          
+                        decimals: Optional[int] = None,
+                        part: str = "CPU: "):          
         if decimals == None:
             decimals = self.config.percent_decimals
         if isinstance(value, (int, float)):
@@ -282,7 +282,7 @@ class SimpleParse(Parser):
         # Parçalara ayır
         parts = [p for p in rest.split("/") if p] if rest else []
 
-        # Kısa ise (prefix + / + join(parts)) döndür
+        # Kısa ise (prefix + / +join(parts)) döndür
         def reassemble(pfx: str, segs: list[str]) -> str:
             if pfx in ("", "~"):
                 out = (pfx + ("/" if pfx and segs else "") + "/".join(segs)) if segs else pfx
@@ -293,32 +293,26 @@ class SimpleParse(Parser):
             else:
                 out = (pfx + "/") if pfx else ""
                 out += "/".join(segs)
-            # Orijinal ayıracı geri koy
             return out.replace("/", orig_sep)
 
         full_norm = reassemble(prefix, parts)
         if len(full_norm) <= max_len:
             return full_norm
 
-        # Segment sayısı 4'ten azsa: "ilk-iki son-iki" anlamlı değil -> head…tail'e düşeceğiz
         if len(parts) >= 4:
-            # 1) İlk iki + son iki + ellipsis
             head = parts[:2]
             tail = parts[-2:]
-            mid = ["..."]  # UI tarafında üç nokta path'te daha güvenli olabilir
-            # (istersen '…' da koyabilirsin)
+            mid = ["..."]  
             candidate = reassemble(prefix, head + mid + tail)
             if len(candidate) <= max_len:
                 return candidate
 
-            # 2) Dosya adına öncelik: son segment tam kalsın, baştan mümkün olduğunca çok göster
             fname = parts[-1]
             base = reassemble(prefix, ["..."] + [fname])
             if len(base) <= max_len:
                 return base
-            # Eğer hâlâ uzunsa: dosya adı çok uzun olabilir; filename'i de kırpacağız
+            
             if len(fname) > 6 and max_len > len(prefix) + 5:  # min biraz alan kalsın
-                # filename'i baş/son koruyarak kısalt
                 keep = max_len - (len(prefix.replace("/", orig_sep)) + len(orig_sep) + 3)  # '.../'
                 keep = max(3, keep)  # min 3 char
                 left = keep // 2
@@ -328,11 +322,7 @@ class SimpleParse(Parser):
                 if len(candidate2) <= max_len:
                     return candidate2
 
-        # 3) Klasik karakter bazlı head…tail (en son çare)
-        #   full_norm zaten orijinal ayıracı içeriyor.
-        #   Çok küçük max_len koruması:
         if max_len <= len(ellipsis) + 1:
-            # sığdığı kadar ellipsis
             return (ellipsis if len(ellipsis) <= max_len else ellipsis[:max_len])
 
         keep = max_len - len(ellipsis)
@@ -340,7 +330,6 @@ class SimpleParse(Parser):
         right = max(1, keep - left)
         squeezed = full_norm[:left] + ellipsis + full_norm[-right:]
 
-        # Garanti: aşarsa buda
         if len(squeezed) > max_len:
             squeezed = squeezed[:max_len]
 
